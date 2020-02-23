@@ -8,6 +8,10 @@ using namespace std;
 const int playerNumberADDR = 0x4FC734; // Player number address
 const int jumpRet = 0x40EF63; // Jump back address
 
+//-------------------------------------------
+int Jiggie = 1;
+//-------------------------------------------
+
 // Hack state
 int unitAlertstate = 1;
 
