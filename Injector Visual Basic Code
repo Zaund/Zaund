@@ -1,0 +1,65 @@
+Public Class Form1
+    Public Declare Function main Lib "Zaund-Inj.dll" () As Integer
+    Public Declare Function FindWindowA Lib "User32" Alias "FindWindowA" (ByVal lpClassName As String, ByVal lpWindowName As String) As IntPtr
+
+    Dim p() As Process
+    Dim hasLoaded As Boolean = False
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Button1.Hide()
+        Timer1.Enabled = False
+        Try
+            Dim loadStatus As Integer = main()
+            If loadStatus = 19 Then
+                MsgBox("Brood War is not open!")
+            ElseIf loadStatus = 1 Then
+                MsgBox("Success")
+            ElseIf loadStatus = 2 Then
+                MsgBox("Could not open process")
+            ElseIf loadStatus = 3 Then
+                MsgBox("Failed to allocate memory")
+            ElseIf loadStatus = 4 Then
+                MsgBox("Failed to write to memory")
+            ElseIf loadStatus = 5 Then
+                MsgBox("Failed to create thread")
+            ElseIf loadStatus = 6 Then
+                MsgBox("Something went wrong!")
+            End If
+        Catch ex As Exception
+            MsgBox("Could not locate Zaund-Inj.dll")
+
+        End Try
+        Button1.Show()
+        Label1.Visible = True
+    End Sub
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        If hasLoaded = False Then
+            Dim windowhandle As IntPtr = FindWindowA(Nothing, "Brood War")
+            Dim bwHandle As Integer = windowhandle
+            If bwHandle > 0 Then
+                Try
+                    Dim loadStatus As Integer = main()
+                    If loadStatus = 1 Then
+                        hasLoaded = True
+                        Label1.Visible = True
+                    Else
+                        Timer1.Enabled = False
+                        Label1.Text = "ERROR"
+                        Label1.Visible = True
+                    End If
+                Catch ex As Exception
+                    Timer1.Enabled = False
+                    Label1.Text = "ERROR"
+                    Label1.Visible = True
+                End Try
+            End If
+
+        ElseIf hasLoaded = True Then
+            Dim windowhandle As IntPtr = FindWindowA(Nothing, "Brood War")
+            Dim bwHandle As Integer = windowhandle
+            If bwHandle = 0 Then
+                hasLoaded = False
+                Label1.Visible = False
+            End If
+        End If
+    End Sub
+End Class
